@@ -9,6 +9,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -28,6 +29,8 @@ public class Game {
 	private int gameId;
 	private Player winner;
 	private boolean inRound;
+	private int numberOfRounds;
+	private float roundTime = 5;
 	
 	public Game(List<Player> players) {
 		this.players = new ArrayList<>();
@@ -70,6 +73,24 @@ public class Game {
 	public Player getWinner() {
 		return this.winner;
 	}
+	
+	@SuppressWarnings("deprecation")
+	public List<Block> randomiseArenaFloor(Location start, Location end) {
+		List<Block> currentBlocks = BukkitUtil.blocksFromTwoPoints(start, end);
+		List<Block> returnBlocks = new ArrayList<>();
+		for (Block block : currentBlocks) {
+			Random random = new Random();
+			int randomColor = random.nextInt(DyeColor.values().length - 1);
+			
+			if (block.getType() == Material.WOOL) {
+				block.setData(DyeColor.values()[randomColor].getData());
+				returnBlocks.add(block);
+			}
+		}
+		
+		return returnBlocks;
+	}
+	
 	@SuppressWarnings("deprecation")
 	public boolean start() {
 		
@@ -96,6 +117,15 @@ public class Game {
 					if (getAlivePlayers().size() > 1) {
 						
 						inRound = true;
+						
+						numberOfRounds++;
+						
+						roundTime -= 0.1;
+						if (roundTime <= 0.5) {
+							roundTime = 0.5f;
+						}
+						
+						getAlivePlayers().forEach(player -> player.sendMessage(ChatColor.GREEN + "Round: " + numberOfRounds));
 						
 						Wool randomWool = new Wool(Material.WOOL);
 						
@@ -128,6 +158,8 @@ public class Game {
 																							
 												block.setType(originalMaterial); block.setData(originalData);
 												
+												randomiseArenaFloor(arenaToStart.getStart(), arenaToStart.getEnd());
+												
 												for (Player player : players) {
 													if (player.getLocation().getY() < arenaToStart.getSpawn().getY()) {
 														player.teleport(arenaToStart.getSpawn());
@@ -146,7 +178,7 @@ public class Game {
 												inRound = false;
 											}
 											
-										}, 20 * 3);
+										}, (long) (15 * roundTime));
 										
 										counter++;
 									}
@@ -165,7 +197,7 @@ public class Game {
 								}
 							}
 							
-						}, 20 * 5);
+						}, (long) (20 * roundTime));
 						
 					} else {
 						if (getAlivePlayers().size() > 0) {

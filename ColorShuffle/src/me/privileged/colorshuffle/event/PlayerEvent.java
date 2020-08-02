@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -32,7 +33,11 @@ public class PlayerEvent implements Listener{
 		Main.getInstance().getPlayerDataManager().add(((PlayerJoinEvent) event).getPlayer());
 		PlayerData playerData = Main.getInstance().getPlayerDataManager().get(event.getPlayer());
 		
+		event.getPlayer().setGameMode(GameMode.SURVIVAL);
+		
 		if (getWaitingPlayers().size() >= 2) {
+			if (startingGame) { return; }
+			
 			this.startingGame = true;
 			this.startGameId = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
 
