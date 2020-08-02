@@ -1,0 +1,7 @@
+name: "ColorShuffle"
+author: Privileged
+main: me.privileged.colorshuffle.Main
+version: 1.0
+
+commands:
+  colorshuffle:
