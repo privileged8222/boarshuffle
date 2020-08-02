@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -84,6 +87,16 @@ public class PlayerEvent implements Listener{
 	@EventHandler
 	public void onBlockBreakeEvent(BlockBreakEvent event) {
 		if (BukkitUtil.buildPlayers.contains(event.getPlayer())) return;
+		event.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void onPlayerDamageEvent(EntityDamageEvent event) {
+		event.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void onPlayerDamageByEntityEvent(EntityDamageByEntityEvent event) {
 		event.setCancelled(true);
 	}
 	
