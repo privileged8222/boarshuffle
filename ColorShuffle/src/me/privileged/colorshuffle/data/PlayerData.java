@@ -2,7 +2,9 @@ package me.privileged.colorshuffle.data;
 
 import org.bukkit.entity.Player;
 
+import me.privileged.colorshuffle.Main;
 import me.privileged.colorshuffle.enums.PlayerGameState;
+import me.privileged.colorshuffle.game.Game;
 
 public class PlayerData {
 
@@ -24,6 +26,16 @@ public class PlayerData {
 
 	public void setGameState(PlayerGameState gameState) {
 		this.gameState = gameState;
+	}
+	
+	public Game getPlayerGame() {
+		for (Game game : Main.getInstance().getGameManager().getGames()) {
+			if (game.getPlayers().contains(this.player)) {
+				return game;
+			}
+		}
+		
+		return null;
 	}
 	
 }

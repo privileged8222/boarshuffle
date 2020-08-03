@@ -15,10 +15,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Wool;
+import org.bukkit.scheduler.BukkitTask;
 
 import me.privileged.colorshuffle.Main;
 import me.privileged.colorshuffle.arena.Arena;
 import me.privileged.colorshuffle.data.PlayerData;
+import me.privileged.colorshuffle.enums.GameState;
 import me.privileged.colorshuffle.enums.PlayerGameState;
 import me.privileged.colorshuffle.util.BukkitUtil;
 import net.md_5.bungee.api.ChatColor;
@@ -31,6 +33,9 @@ public class Game {
 	private boolean inRound;
 	private int numberOfRounds;
 	private float roundTime = 5;
+	private int resetId;
+	private GameState gameState;
+	private Arena arena;
 	
 	public Game(List<Player> players) {
 		this.players = new ArrayList<>();
@@ -74,6 +79,22 @@ public class Game {
 		return this.winner;
 	}
 	
+	public GameState getGameState() {
+		return gameState;
+	}
+
+	public void setGameState(GameState gameState) {
+		this.gameState = gameState;
+	}
+	
+	public int getRoundNumber() {
+		return this.numberOfRounds;
+	}
+	
+	public Arena getArena() {
+		return this.arena;
+	}
+	
 	@SuppressWarnings("deprecation")
 	public List<Block> randomiseArenaFloor(Location start, Location end) {
 		List<Block> currentBlocks = BukkitUtil.blocksFromTwoPoints(start, end);
@@ -99,6 +120,7 @@ public class Game {
 			return false;
 		}
 
+		this.arena = arenaToStart;
 		this.players.forEach(player -> player.teleport(arenaToStart.getSpawn())); 
 		this.players.forEach(player -> player.getInventory().clear());
 		for (Player player : this.players) {
@@ -114,13 +136,21 @@ public class Game {
 			public void run() {
 			
 				if (!inRound) {
+					
+					if (Bukkit.getScheduler().getPendingTasks().size() > 1) {
+						Bukkit.broadcastMessage("" + Bukkit.getScheduler().getPendingTasks().size());
+						return;
+					}
+					
 					if (getAlivePlayers().size() > 1) {
+						
+						gameState = GameState.IN_GAME;
 						
 						inRound = true;
 						
 						numberOfRounds++;
 						
-						roundTime -= 0.1;
+						roundTime -= 0.3;
 						if (roundTime <= 0.5) {
 							roundTime = 0.5f;
 						}
@@ -151,7 +181,7 @@ public class Game {
 									if (!(block.getType() == Material.WOOL && block.getData() == DyeColor.values()[randomWool.getColor().ordinal()].getData())) {
 										block.setType(Material.AIR);
 										
-										Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+										resetId = Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 											
 											@Override
 											public void run() {
@@ -178,7 +208,7 @@ public class Game {
 												inRound = false;
 											}
 											
-										}, (long) (15 * roundTime));
+										}, (long) (20 * roundTime));
 										
 										counter++;
 									}

@@ -71,8 +71,6 @@ public class PlayerEvent implements Listener{
 	
 	@EventHandler
 	public void onPlayerQuitEvent(PlayerQuitEvent event) {
-		Main.getInstance().getPlayerDataManager().remove(((PlayerQuitEvent) event).getPlayer());
-		
 		if (getWaitingPlayers().size() < 2) {
 			if (this.startingGame) { 
 				this.startingGame = false; 
@@ -80,7 +78,8 @@ public class PlayerEvent implements Listener{
 				Bukkit.broadcastMessage(ChatColor.RED + "There are not enough players to start the game!");
 			}
 		}
-			
+		
+		Main.getInstance().getPlayerDataManager().remove(((PlayerQuitEvent) event).getPlayer());	
 	}
 	
 	@EventHandler

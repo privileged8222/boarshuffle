@@ -1,6 +1,8 @@
 package me.privileged.colorshuffle;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import me.privileged.colorshuffle.command.ColorShuffle;
 import me.privileged.colorshuffle.event.PlayerEvent;
