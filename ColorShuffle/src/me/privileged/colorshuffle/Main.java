@@ -45,10 +45,10 @@ public class Main extends JavaPlugin{
 	}
 	
 	private void setupManagers() {
+		this.configManager = new ConfigManager();
 		this.playerDataManager = new PlayerDataManager();
 		this.gameManager = new GameManager();
 		this.arenaManager = new ArenaManager();
-		this.configManager = new ConfigManager();
 	}
 
 	private void registerListeners() {

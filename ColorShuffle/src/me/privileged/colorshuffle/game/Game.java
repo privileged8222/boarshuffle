@@ -137,10 +137,7 @@ public class Game {
 			
 				if (!inRound) {
 					
-					if (Bukkit.getScheduler().getPendingTasks().size() > 1) {
-						Bukkit.broadcastMessage("" + Bukkit.getScheduler().getPendingTasks().size());
-						return;
-					}
+					if (Bukkit.getScheduler().getPendingTasks().size() > 1) { return; }
 					
 					if (getAlivePlayers().size() > 1) {
 						
@@ -180,7 +177,7 @@ public class Game {
 									byte originalData = block.getData();
 									if (!(block.getType() == Material.WOOL && block.getData() == DyeColor.values()[randomWool.getColor().ordinal()].getData())) {
 										block.setType(Material.AIR);
-										
+										players.forEach(player -> player.getInventory().clear());
 										resetId = Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 											
 											@Override
@@ -238,7 +235,7 @@ public class Game {
 							Main.getInstance().getConfigManager().reloadWinners();
 							
 							List<String> currentWinners = Main.getInstance().getConfigManager().getWinners().getStringList("winners");			
-							currentWinners.add(winner.getName());
+							if (!currentWinners.contains(winner.getName())) { currentWinners.add(winner.getName()); }
 							Main.getInstance().getConfigManager().getWinners().set("winners", currentWinners);
 							
 							DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");  
